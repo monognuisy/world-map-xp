@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
-import geoJson from 'world-geojson';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoibW9ub2dudWlzeSIsImEiOiJjbGpyM3NtNW4wY2JzM2JuZ2U0NGl6N2xkIn0._f_HHkotdV3pQUahw0kUBg';
@@ -13,7 +12,8 @@ export default function App() {
   const [zoom, setZoom] = useState(9);
 
   useEffect(() => {
-    if (map.current) return; // initialize map only once
+    // 처음에만 map 초기화
+    if (map.current) return; 
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -25,36 +25,23 @@ export default function App() {
     const currMap = map?.current;
   
     currMap.on('load', () => {
-      // Add a source for the state polygons.
-      currMap.addSource('U.S.A.', {
-        type: 'geojson',
-        data: geoJson.forCountry('U.S.A.'),
+      // 나라 polygon의 데이터 추가
+      currMap.addSource('states', {
+        'type': 'geojson',
+        'data': 'https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_admin_0_countries.geojson'
       });
-      currMap.addSource('Canada', {
-        type: 'geojson',
-        data: geoJson.forCountry('south_korea'),
-      });
-  
-      // Add a layer showing the state polygons.
+
+      // 추가된 나라의 polygon을 보여주는 레이어를 추가
       currMap.addLayer({
-        id: 'usa-layer',
-        type: 'fill',
-        source: 'U.S.A.',
-        paint: {
-          'fill-color': 'rgba(200, 100, 240, 0.4)',
-          'fill-outline-color': 'rgba(200, 100, 240, 1)',
-        },
+        'id': 'states-layer',
+        'type': 'fill',
+        'source': 'states',
+        'paint': {
+            'fill-color': 'rgba(200, 100, 240, 0.4)',
+            'fill-outline-color': 'rgba(200, 100, 240, 1)'
+        }
       });
-      currMap.addLayer({
-        id: 'canada-layer',
-        type: 'fill',
-        source: 'Canada',
-        paint: {
-          'fill-color': 'rgba(200, 100, 240, 0.4)',
-          'fill-outline-color': 'rgba(200, 100, 240, 1)',
-        },
-      });
-  
+    
       // When a click event occurs on a feature in the states layer,
       // open a popup at the location of the click, with description
       // HTML from the click event's properties.
