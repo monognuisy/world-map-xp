@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
+import geoJson from 'world-geojson';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoibW9ub2dudWlzeSIsImEiOiJjbGpyM3NtNW4wY2JzM2JuZ2U0NGl6N2xkIn0._f_HHkotdV3pQUahw0kUBg';
@@ -25,16 +26,29 @@ export default function App() {
   
     currMap.on('load', () => {
       // Add a source for the state polygons.
-      currMap.addSource('states', {
+      currMap.addSource('U.S.A.', {
         type: 'geojson',
-        data: 'https://docs.mapbox.com/mapbox-gl-js/assets/ne_110m_admin_1_states_provinces_shp.geojson',
+        data: geoJson.forCountry('U.S.A.'),
+      });
+      currMap.addSource('Canada', {
+        type: 'geojson',
+        data: geoJson.forCountry('south_korea'),
       });
   
       // Add a layer showing the state polygons.
       currMap.addLayer({
-        id: 'states-layer',
+        id: 'usa-layer',
         type: 'fill',
-        source: 'states',
+        source: 'U.S.A.',
+        paint: {
+          'fill-color': 'rgba(200, 100, 240, 0.4)',
+          'fill-outline-color': 'rgba(200, 100, 240, 1)',
+        },
+      });
+      currMap.addLayer({
+        id: 'canada-layer',
+        type: 'fill',
+        source: 'Canada',
         paint: {
           'fill-color': 'rgba(200, 100, 240, 0.4)',
           'fill-outline-color': 'rgba(200, 100, 240, 1)',
