@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
-import { tokenRecord } from './token';
+// import 'mapbox-gl/dist/mapbox-gl.css';
+import { tokenRecord } from '../token';
 
 mapboxgl.accessToken = tokenRecord.pub;
 
