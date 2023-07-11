@@ -1,78 +1,77 @@
-import React, { useRef, useEffect, useState } from 'react';
-import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
-import { tokenRecord } from './token';
+import { Outlet } from "react-router-dom";
+import { createGlobalStyle } from "styled-components";
 
-mapboxgl.accessToken = tokenRecord.pub;
 
 export default function App() {
-  const mapContainer = useRef(null);
-  const map = useRef(null);
-  const [longitude, setLongitude] = useState(-70.9);  // 경도
-  const [latitude, setLatitude] = useState(42.35);    // 위도
-  const [zoom, setZoom] = useState(9);
-
-  useEffect(() => {
-    // 처음에만 map 초기화
-    if (map.current) return; 
-
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
-      center: [longitude, latitude],
-      zoom: zoom,
-    });
-
-    const currMap = map?.current;
-  
-    currMap.on('load', () => {
-      // 나라 polygon의 데이터 추가
-      currMap.addSource('states', {
-        'type': 'geojson',
-        'data': 'https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_admin_0_countries.geojson'
-      });
-
-      // 추가된 나라의 polygon을 보여주는 레이어를 추가
-      currMap.addLayer({
-        'id': 'states-layer',
-        'type': 'fill',
-        'source': 'states',
-        'paint': {
-            'fill-color': 'rgba(200, 100, 240, 0.4)',
-            'fill-outline-color': 'rgba(200, 100, 240, 1)'
-        }
-      });
-    
-      // When a click event occurs on a feature in the states layer,
-      // open a popup at the location of the click, with description
-      // HTML from the click event's properties.
-      currMap.on('click', 'states-layer', (e) => {
-        new mapboxgl.Popup()
-          .setLngLat(e.lngLat)
-          .setHTML(e.features[0].properties.name)
-          .addTo(currMap);
-      });
-  
-      // Change the cursor to a pointer when
-      // the mouse is over the states layer.
-      currMap.on('mouseenter', 'states-layer', () => {
-        currMap.getCanvas().style.cursor = 'pointer';
-      });
-  
-      // Change the cursor back to a pointer
-      // when it leaves the states layer.
-      currMap.on('mouseleave', 'states-layer', () => {
-        currMap.getCanvas().style.cursor = '';
-      });
-    });
-    
-    console.log(currMap);
-  });
-
-  
-
-  return (
-    <div>
-      <div ref={mapContainer} className="map-container" />
-    </div>
-  );
+    return (
+        <>
+            <GlobalStyle />
+            <Outlet />
+        </>
+    );
 }
+
+const GlobalStyle = createGlobalStyle`
+  :root {
+    --line-color: #999999;
+    --background-color: #EBEBE8;
+    
+  }
+  body {
+    padding: 0;
+    margin: 0;
+    font-size: 16px;
+    background-color: var(--background-color);
+    height: 100vh;
+  }
+  //
+  //* {
+  //  margin: 0;
+  //  padding: 0;
+  //  box-sizing: border-box;
+  //  font-family: medium;
+  //}
+  //
+  //a {
+  //  color: inherit;
+  //  text-decoration: none;
+  //}
+  //
+  //a:hover {
+  //  text-decoration: none;
+  //}
+  //
+  //li {
+  //  list-style: none;
+  //}
+  //
+  //button {
+  //  background-color: white;
+  //  border: none;
+  //}
+  //
+  //input {
+  //  border: none;
+  //}
+  //
+  //h1 {
+  //  font-size: 17px;
+  //  font-weight: 500;
+  //}
+  //h2 {
+  //  font-size: 16px;
+  //  font-weight: 500;
+  //}
+  //h3 {
+  //  font-size: 15px;
+  //  font-weight: 400;
+  //}
+  //p {
+  //  font-size: 14px;
+  //}
+  //span {
+  //  font-size: 12px;
+  //}
+
+
+`;
