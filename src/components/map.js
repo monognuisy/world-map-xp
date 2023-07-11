@@ -115,8 +115,7 @@ function Map() {
         }
       });
 
-      // Change the cursor back to a pointer
-      // when it leaves the states layer.
+      // onLeave
       currMap.on('mouseleave', 'states-layer', () => {
         currMap.getCanvas().style.cursor = '';
         if (hoveredPolygonId !== null) {
