@@ -3,6 +3,8 @@ import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-load
 // import 'mapbox-gl/dist/mapbox-gl.css';
 import { tokenRecord } from '../token';
 
+import { worlds } from '../assets/worldData';
+
 mapboxgl.accessToken = tokenRecord.pub;
 
 function Map() {
@@ -29,7 +31,7 @@ function Map() {
             // 나라 polygon의 데이터 추가
             currMap.addSource('states', {
                 'type': 'geojson',
-                'data': 'https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_admin_0_countries.geojson'
+                'data': worlds
             });
 
             // 추가된 나라의 polygon을 보여주는 레이어를 추가
@@ -65,8 +67,6 @@ function Map() {
                 currMap.getCanvas().style.cursor = '';
             });
         });
-
-        console.log(currMap);
     });
 
 
