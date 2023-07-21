@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import styled from 'styled-components';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { tokenRecord } from '../token';
@@ -6,11 +7,12 @@ import { tokenRecord } from '../token';
 import { worlds } from '../assets/worldData';
 
 import { polyColors } from '../utils/colors';
+import { PostContainer } from './mapStyle';
 
 mapboxgl.accessToken = tokenRecord.pub;
 
 // number of total colors.
-const numOfColors = 6;
+const NUMOFCOLORS = 6;
 
 function Map() {
   const mapContainer = useRef(null);
@@ -18,6 +20,7 @@ function Map() {
   const [lng, setLng] = useState(-70.9);
   const [lat, setLat] = useState(42.35);
   const [zoom, setZoom] = useState(9);
+  const [isClicked, setIsClicked] = useState(false);
   const colorStage = useRef(null);
 
   useEffect(() => {
@@ -91,6 +94,7 @@ function Map() {
           colorStage[currCountryId] = (colorStage[currCountryId] + 1) % 6;
         }
 
+        setIsClicked(() => true);
         currMap.setFeatureState(
           { source: 'states', id: hoveredPolygonId },
           { color: colorStage[currCountryId] },
@@ -132,6 +136,7 @@ function Map() {
   return (
     <div>
       <div ref={mapContainer} className="map-container" />
+      {/* {isClicked ? <PostContainer></PostContainer> : <></>} */}
     </div>
   );
 }
