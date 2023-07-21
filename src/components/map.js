@@ -1,11 +1,18 @@
 import React, { useRef, useEffect, useState } from 'react';
+import styled from 'styled-components';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { tokenRecord } from '../token';
 
 import { worlds } from '../assets/worldData';
 
+import { polyColors } from '../utils/colors';
+import { PostContainer } from './mapStyle';
+
 mapboxgl.accessToken = tokenRecord.pub;
+
+// number of total colors.
+const NUMOFCOLORS = 6;
 
 function Map() {
   const mapContainer = useRef(null);
@@ -13,6 +20,8 @@ function Map() {
   const [lng, setLng] = useState(-70.9);
   const [lat, setLat] = useState(42.35);
   const [zoom, setZoom] = useState(9);
+  const [isClicked, setIsClicked] = useState(false);
+  const colorStage = useRef(null);
 
   useEffect(() => {
     let hoveredPolygonId = null;
@@ -41,32 +50,60 @@ function Map() {
         type: 'fill',
         source: 'states',
         paint: {
-          'fill-color': 'rgba(200, 100, 240, 1)',
+          // 'fill-color': 'rgba(200, 100, 240, 1)',
+          'fill-color': [
+            'case',
+            ['==', ['feature-state', 'color'], 0],
+            `${polyColors.transparent}`,
+            ['==', ['feature-state', 'color'], 1],
+            `${polyColors.lightBlue}`,
+            ['==', ['feature-state', 'color'], 2],
+            `${polyColors.green}`,
+            ['==', ['feature-state', 'color'], 3],
+            `${polyColors.yellow}`,
+            ['==', ['feature-state', 'color'], 4],
+            `${polyColors.red}`,
+            ['==', ['feature-state', 'color'], 5],
+            `${polyColors.purple}`,
+            `${polyColors.transparent}`,
+          ],
           'fill-opacity': [
             'case',
             ['boolean', ['feature-state', 'hover'], false],
+            1.5,
             0.8,
-            0.5,
           ],
           'fill-outline-color': 'rgba(200, 100, 240, 1)',
         },
       });
 
-      // When a click event occurs on a feature in the states layer,
-      // open a popup at the location of the click, with description
-      // HTML from the click event's properties.
+      // onClick
       currMap.on('click', 'states-layer', (e) => {
-        new mapboxgl.Popup()
-          .setLngLat(e.lngLat)
-          .setHTML(e.features[0].properties.name)
-          .addTo(currMap);
+        // Show popup with country name.
+        // new mapboxgl.Popup()
+        //   .setLngLat(e.lngLat)
+        //   .setHTML(e.features[0].properties.name)
+        //   .addTo(currMap);
+
+        // Set color stage of clicked country.
+        const currCountryId = e.features[0].id;
+
+        if (colorStage[currCountryId] === undefined) {
+          colorStage[currCountryId] = 1;
+        } else {
+          colorStage[currCountryId] = (colorStage[currCountryId] + 1) % 6;
+        }
+
+        setIsClicked(() => true);
+        currMap.setFeatureState(
+          { source: 'states', id: hoveredPolygonId },
+          { color: colorStage[currCountryId] },
+        );
       });
 
-      // Change the cursor to a pointer when
-      // the mouse is over the states layer.
+      // onMove
       currMap.on('mousemove', 'states-layer', (e) => {
         currMap.getCanvas().style.cursor = 'pointer';
-        console.log(e.features[0]);
         if (e.features.length > 0) {
           if (hoveredPolygonId !== null) {
             currMap.setFeatureState(
@@ -82,8 +119,7 @@ function Map() {
         }
       });
 
-      // Change the cursor back to a pointer
-      // when it leaves the states layer.
+      // onLeave
       currMap.on('mouseleave', 'states-layer', () => {
         currMap.getCanvas().style.cursor = '';
         if (hoveredPolygonId !== null) {
@@ -100,6 +136,7 @@ function Map() {
   return (
     <div>
       <div ref={mapContainer} className="map-container" />
+      {/* {isClicked ? <PostContainer></PostContainer> : <></>} */}
     </div>
   );
 }
