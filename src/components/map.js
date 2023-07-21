@@ -136,7 +136,7 @@ function Map() {
   return (
     <div>
       <div ref={mapContainer} className="map-container" />
-      {isClicked ? <PostContainer></PostContainer> : <></>}
+      {/* {isClicked ? <PostContainer></PostContainer> : <></>} */}
     </div>
   );
 }
