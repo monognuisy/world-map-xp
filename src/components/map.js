@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState } from 'react';
-import styled from 'styled-components';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { tokenRecord } from '../token';
@@ -7,7 +6,7 @@ import { tokenRecord } from '../token';
 import { worlds } from '../assets/worldData';
 
 import { polyColors } from '../utils/colors';
-import { PostContainer } from './mapStyle';
+import Sidebox from './sidebox';
 
 mapboxgl.accessToken = tokenRecord.pub;
 
@@ -21,7 +20,9 @@ function Map() {
   const [lat, setLat] = useState(42.35);
   const [zoom, setZoom] = useState(9);
   const [isClicked, setIsClicked] = useState(false);
-  const colorStage = useRef(null);
+  const [countryName, setCountryName] = useState('');
+  const [countryProperty, setCountryProperty] = useState(null);
+  const colorStage = useRef([]);
 
   useEffect(() => {
     let hoveredPolygonId = null;
@@ -80,25 +81,27 @@ function Map() {
       // onClick
       currMap.on('click', 'states-layer', (e) => {
         // Show popup with country name.
-        // new mapboxgl.Popup()
-        //   .setLngLat(e.lngLat)
-        //   .setHTML(e.features[0].properties.name)
-        //   .addTo(currMap);
+        // console.log(e.features);
+        setCountryProperty(() => e.features[0].properties);
 
-        // Set color stage of clicked country.
-        const currCountryId = e.features[0].id;
+        const cname = e.features[0].properties.geounit;
+        // new mapboxgl.Popup().setLngLat(e.lngLat).setHTML(cname).addTo(currMap);
 
-        if (colorStage[currCountryId] === undefined) {
-          colorStage[currCountryId] = 1;
-        } else {
-          colorStage[currCountryId] = (colorStage[currCountryId] + 1) % 6;
-        }
+        // // Set color stage of clicked country.
+        // const currCountryId = e.features[0].id;
 
+        // if (colorStage[currCountryId] === undefined) {
+        //   colorStage[currCountryId] = 1;
+        // } else {
+        //   colorStage[currCountryId] = (colorStage[currCountryId] + 1) % 6;
+        // }
+
+        setCountryName(() => cname);
         setIsClicked(() => true);
-        currMap.setFeatureState(
-          { source: 'states', id: hoveredPolygonId },
-          { color: colorStage[currCountryId] },
-        );
+        // currMap.setFeatureState(
+        //   { source: 'states', id: hoveredPolygonId },
+        //   { color: colorStage[currCountryId] },
+        // );
       });
 
       // onMove
@@ -136,7 +139,11 @@ function Map() {
   return (
     <div>
       <div ref={mapContainer} className="map-container" />
-      {/* {isClicked ? <PostContainer></PostContainer> : <></>} */}
+      {isClicked ? (
+        <Sidebox countryName={countryName} countryProperty={countryProperty} />
+      ) : (
+        <></>
+      )}
     </div>
   );
 }
