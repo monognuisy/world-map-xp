@@ -1,5 +1,7 @@
-import { Outlet } from "react-router-dom";
-import { createGlobalStyle } from "styled-components";
+import { Outlet } from 'react-router-dom';
+import { createGlobalStyle } from 'styled-components';
+
+import NotoColorEmojiFont from './font/NotoColorEmoji-Regular.ttf';
 
 export default function App() {
   return (
@@ -21,17 +23,20 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
     margin: 0;
     font-size: 16px;
+    font-family: Pretendard, -apple-system, BlinkMacSystemFont, 'Noto Color Emoji',
+    'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
+    'Droid Sans', 'Helvetica Neue', sans-serif;
     background-color: var(--background-color);
     height: 100vh;
 
   }
   //
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: caveat;
-  }
+  // * {
+  //   margin: 0;
+  //   padding: 0;
+  //   box-sizing: border-box;
+  //   font-family: caveat;
+  // }
 
   a {
     color: inherit;
@@ -73,21 +78,26 @@ const GlobalStyle = createGlobalStyle`
   span {
     font-size: 12px;
   }
-  @font-face {
-    font-family: "bold";
-    src: url("/font/AnonymousPro-Bold.ttf");
-    font-display: swap;
-  }
-  @font-face {
-    font-family: "regular";
-    src: url("/font/AnonymousPro-Regular.ttf");
-    font-display: swap;
-  }
-  @font-face {
-    font-family: "caveat";
-    src: url("/font/Caveat-VariableFont_wght.ttf");
-    font-display: swap;
-  }
+  // @font-face {
+  //   font-family: "bold";
+  //   src: url("/font/AnonymousPro-Bold.ttf");
+  //   font-display: swap;
+  // }
+  // @font-face {
+  //   font-family: "regular";
+  //   src: url("/font/AnonymousPro-Regular.ttf");
+  //   font-display: swap;
+  // }
+  // @font-face {
+  //   font-family: "caveat";
+  //   src: url("/font/Caveat-VariableFont_wght.ttf");
+  //   font-display: swap;
+  // }
 
+  @font-face {
+    font-family: "Noto Color Emoji";
+    src: url("${NotoColorEmojiFont}");
+    font-display: swap;
+  }
 
 `;
