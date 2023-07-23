@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { polyColors } from '../utils/colors';
-import { DateRange } from 'react-date-range';
+import { DateRange, Calendar } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import { addDays, differenceInDays } from 'date-fns';
+import format from 'date-fns/format';
 import { worldFlag } from '../assets/worldAssets';
+import './sidebox.css';
 
 import tokyoAsakusa from '../images/tokyo_asakusa.jpg';
 
@@ -56,9 +58,9 @@ const Sidebox = ({ countryName, countryProperty }) => {
 
   return (
     <>
-      <PostWrapper>
+      <SideboxWrapper>
         <PictureHeader src={tokyoAsakusa} alt="tokyo-asakusa" />
-        <PostContainer>
+        <PostWrapper>
           <NameWrapper>
             <CountryName>
               {countryName} {flag}
@@ -104,8 +106,12 @@ const Sidebox = ({ countryName, countryProperty }) => {
           />
           {calcDate(date[0])} */}
           {/* <Post /> */}
-        </PostContainer>
-      </PostWrapper>
+          <PostContainer>
+            <Post />
+            {/* <Post /> */}
+          </PostContainer>
+        </PostWrapper>
+      </SideboxWrapper>
     </>
   );
 };
@@ -114,11 +120,11 @@ export default Sidebox;
 
 // Styled-components
 
-const PostWrapper = styled.div`
+const SideboxWrapper = styled.div`
   position: absolute;
   top: 10px;
   right: 10px;
-  width: calc(33% - 20px);
+  width: calc(34% - 20px);
   height: calc(100% - 20px);
   z-index: 10;
   background-color: #ffffff;
@@ -127,7 +133,7 @@ const PostWrapper = styled.div`
   overflow-y: scroll;
 `;
 
-const PostContainer = styled.div`
+const PostWrapper = styled.div`
   padding: 10px;
 `;
 
@@ -156,6 +162,11 @@ const StatusWrapper = styled.div`
   justify-content: space-around;
 `;
 
+const PostContainer = styled.div`
+  margin-top: 1rem;
+  width: 100%;
+`;
+
 const StatusBlock = ({ color = LightGray }) => {
   return (
     <div
@@ -170,17 +181,117 @@ const StatusBlock = ({ color = LightGray }) => {
 };
 
 const Post = () => {
+  const [date, setDate] = useState([
+    {
+      startDate: new Date(),
+      endDate: addDays(new Date(), 1),
+      key: 'selection',
+    },
+  ]);
+
+  const [calendar, setCalendar] = useState('');
+  const handleSelect = (date) => {
+    // console.log(date);
+    setCalendar(format(date, 'MM/dd/yyyy'));
+  };
+
   return (
-    <textarea
+    <div
       style={{
-        display: `block`,
-        height: `50%`,
-        width: `100%`,
-        margin: `0 auto`,
-        border: `2px solid`,
-        borderRadius: `5px`,
+        margin: `1rem 0`,
         padding: `10px`,
+        border: `1.5px solid ${LightGray}`,
+        borderRadius: `10px`,
       }}
-    ></textarea>
+    >
+      <header
+        style={{
+          display: `flex`,
+          flexDirection: `row`,
+          justifyContent: `space-between`,
+        }}
+      >
+        <div
+          className="Profile"
+          style={{
+            display: `flex`,
+          }}
+        >
+          <img
+            src={tokyoAsakusa}
+            alt="profile"
+            style={{
+              display: `block`,
+              height: `2rem`,
+              objectFit: `cover`,
+              width: `2rem`,
+              borderRadius: `1rem`,
+              marginRight: `0.5rem`,
+            }}
+          ></img>
+          <div>
+            <h2
+              style={{
+                margin: 0,
+                fontWeight: 600,
+              }}
+            >
+              monognuisy
+            </h2>
+            <p
+              style={{
+                margin: 0,
+              }}
+            >
+              Parisien
+            </p>
+          </div>
+        </div>
+        <div>
+          <input
+            value={calendar}
+            readOnly
+            className="inputBox"
+            style={{
+              border: `1px solid`,
+            }}
+          />
+          <DateRange
+            editableDateInputs={true}
+            onChange={(item) => setDate([item.selection])}
+            moveRangeOnFirstSelection={false}
+            ranges={date}
+            months={1}
+            direction="horizontal"
+          />
+        </div>
+      </header>
+      <textarea
+        style={{
+          display: `block`,
+          // height: `50%`,
+          minHeight: `10rem`,
+          border: `none`,
+          width: `100%`,
+          marginTop: `1rem`,
+        }}
+      ></textarea>
+      <div>
+        <></>
+        <button
+          style={{
+            padding: `5px 10px`,
+            fontWeight: 600,
+            fontSize: `1rem`,
+            color: `white`,
+            backgroundColor: `#48B6F4`,
+            borderRadius: `5px`,
+            boxShadow: `rgba(99, 99, 99, 0.2) 0px 2px 8px 0px`,
+          }}
+        >
+          POST↗
+        </button>
+      </div>
+    </div>
   );
 };
