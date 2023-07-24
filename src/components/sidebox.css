@@ -2,6 +2,6 @@
 .rdrDateRangeWrapper {
   position: absolute;
   right: 20px;
-  transform: translateY(2rem);
+  transform: translateY(1rem);
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 }

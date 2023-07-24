@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { polyColors } from '../utils/colors';
 import { DateRange, Calendar } from 'react-date-range';
@@ -22,14 +22,6 @@ const Sidebox = ({ countryName, countryProperty }) => {
     polyColors.red,
     polyColors.purple,
   ];
-
-  const [date, setDate] = useState([
-    {
-      startDate: new Date(),
-      endDate: addDays(new Date(), 1),
-      key: 'selection',
-    },
-  ]);
 
   // 총 여행 일 수
   const [totalDate, setTotalDate] = useState(0);
@@ -96,19 +88,8 @@ const Sidebox = ({ countryName, countryProperty }) => {
             </div>
             <div></div>
           </StatusWrapper>
-          {/* <DateRange
-            editableDateInputs={true}
-            onChange={(item) => setDate([item.selection])}
-            moveRangeOnFirstSelection={false}
-            ranges={date}
-            months={2}
-            direction="horizontal"
-          />
-          {calcDate(date[0])} */}
-          {/* <Post /> */}
           <PostContainer>
             <Post />
-            {/* <Post /> */}
           </PostContainer>
         </PostWrapper>
       </SideboxWrapper>
@@ -181,6 +162,7 @@ const StatusBlock = ({ color = LightGray }) => {
 };
 
 const Post = () => {
+  // date state
   const [date, setDate] = useState([
     {
       startDate: new Date(),
@@ -189,11 +171,41 @@ const Post = () => {
     },
   ]);
 
-  const [calendar, setCalendar] = useState('');
-  const handleSelect = (date) => {
-    // console.log(date);
-    setCalendar(format(date, 'MM/dd/yyyy'));
+  // is open or close?
+  const [open, setOpen] = useState(false);
+
+  // get the target element to toggle
+  const refOne = useRef(null);
+
+  // content of the post
+  const postRef = useRef(null);
+
+  useEffect(() => {
+    document.addEventListener('keydown', hideOnEscape, true);
+    document.addEventListener('click', hideOnClickOutside, true);
+  }, []);
+
+  // hide calendar dropdown on ESC press
+  const hideOnEscape = (e) => {
+    console.log(e.key);
+    if (e.key === 'Escape') {
+      setOpen(false);
+    }
   };
+
+  // hide calendar dropdown on Outside click
+  const hideOnClickOutside = (e) => {
+    if (refOne.current && !refOne.current.contains(e.target)) {
+      setOpen(false);
+    }
+  };
+
+  const handlePost = (e) => {
+    e.preventDefault();
+    alert(postRef.current.value);
+  };
+
+  const formatDate = (date) => format(date, 'yyyy/MM/dd');
 
   return (
     <div
@@ -249,32 +261,41 @@ const Post = () => {
         </div>
         <div>
           <input
-            value={calendar}
+            value={`${formatDate(date[0].startDate)} ~ ${formatDate(
+              date[0].endDate,
+            )}`}
             readOnly
             className="inputBox"
             style={{
-              border: `1px solid`,
+              textAlign: `right`,
+              // border: `1px solid`,
             }}
+            onClick={() => setOpen((open) => !open)}
           />
-          <DateRange
-            editableDateInputs={true}
-            onChange={(item) => setDate([item.selection])}
-            moveRangeOnFirstSelection={false}
-            ranges={date}
-            months={1}
-            direction="horizontal"
-          />
+          <div ref={refOne}>
+            {open && (
+              <DateRange
+                editableDateInputs={true}
+                onChange={(item) => setDate([item.selection])}
+                moveRangeOnFirstSelection={false}
+                ranges={date}
+                months={1}
+                direction="horizontal"
+              />
+            )}
+          </div>
         </div>
       </header>
       <textarea
         style={{
           display: `block`,
-          // height: `50%`,
           minHeight: `10rem`,
           border: `none`,
-          width: `100%`,
+          width: `calc(100% - 20px)`,
           marginTop: `1rem`,
+          padding: `10px`,
         }}
+        ref={postRef}
       ></textarea>
       <div>
         <></>
@@ -287,7 +308,9 @@ const Post = () => {
             backgroundColor: `#48B6F4`,
             borderRadius: `5px`,
             boxShadow: `rgba(99, 99, 99, 0.2) 0px 2px 8px 0px`,
+            marginTop: `1rem`,
           }}
+          onClick={handlePost}
         >
           POST↗
         </button>
