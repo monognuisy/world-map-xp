@@ -1,11 +1,15 @@
 import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
+import Geocoder from '@mapbox/mapbox-gl-geocoder';
+
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import './mapStyle.css';
+
 import { tokenRecord } from '../token';
-
 import { worlds } from '../assets/worldData';
-
 import { polyColors } from '../utils/colors';
+
 import Sidebox from './sidebox';
 
 mapboxgl.accessToken = tokenRecord.pub;
@@ -19,6 +23,12 @@ function Map() {
   const [lng, setLng] = useState(-70.9);
   const [lat, setLat] = useState(42.35);
   const [zoom, setZoom] = useState(9);
+
+  const [viewport, setViewport] = useState({
+    latitude: 37.7577,
+    longitude: -122.4376,
+    zoom: 8,
+  });
 
   //
   const [sideboxOpened, setSideboxOpened] = useState(false);
@@ -142,6 +152,14 @@ function Map() {
         }
         hoveredPolygonId = null;
       });
+
+      // Add search box (a.k.a. Geocoder)
+      currMap.addControl(
+        new Geocoder({
+          accessToken: mapboxgl.accessToken,
+          mapboxgl: mapboxgl,
+        }),
+      );
     });
   });
 
