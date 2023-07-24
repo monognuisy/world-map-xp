@@ -89,7 +89,7 @@ const Sidebox = ({ countryName, countryProperty }) => {
             <div></div>
           </StatusWrapper>
           <PostContainer>
-            <Post />
+            <Post countryName={countryName} />
           </PostContainer>
         </PostWrapper>
       </SideboxWrapper>
@@ -161,7 +161,7 @@ const StatusBlock = ({ color = LightGray }) => {
   );
 };
 
-const Post = () => {
+const Post = ({ countryName }) => {
   // date state
   const [date, setDate] = useState([
     {
@@ -200,6 +200,7 @@ const Post = () => {
     }
   };
 
+  // handle post button
   const handlePost = (e) => {
     e.preventDefault();
     alert(postRef.current.value);
@@ -208,57 +209,9 @@ const Post = () => {
   const formatDate = (date) => format(date, 'yyyy/MM/dd');
 
   return (
-    <div
-      style={{
-        margin: `1rem 0`,
-        padding: `10px`,
-        border: `1.5px solid ${LightGray}`,
-        borderRadius: `10px`,
-      }}
-    >
-      <header
-        style={{
-          display: `flex`,
-          flexDirection: `row`,
-          justifyContent: `space-between`,
-        }}
-      >
-        <div
-          className="Profile"
-          style={{
-            display: `flex`,
-          }}
-        >
-          <img
-            src={tokyoAsakusa}
-            alt="profile"
-            style={{
-              display: `block`,
-              height: `2rem`,
-              objectFit: `cover`,
-              width: `2rem`,
-              borderRadius: `1rem`,
-              marginRight: `0.5rem`,
-            }}
-          ></img>
-          <div>
-            <h2
-              style={{
-                margin: 0,
-                fontWeight: 600,
-              }}
-            >
-              monognuisy
-            </h2>
-            <p
-              style={{
-                margin: 0,
-              }}
-            >
-              Parisien
-            </p>
-          </div>
-        </div>
+    <PostInnerWrapper>
+      <ProfileHeader>
+        <Profile />
         <div>
           <input
             value={`${formatDate(date[0].startDate)} ~ ${formatDate(
@@ -268,7 +221,6 @@ const Post = () => {
             className="inputBox"
             style={{
               textAlign: `right`,
-              // border: `1px solid`,
             }}
             onClick={() => setOpen((open) => !open)}
           />
@@ -285,36 +237,84 @@ const Post = () => {
             )}
           </div>
         </div>
-      </header>
-      <textarea
-        style={{
-          display: `block`,
-          minHeight: `10rem`,
-          border: `none`,
-          width: `calc(100% - 20px)`,
-          marginTop: `1rem`,
-          padding: `10px`,
-        }}
+      </ProfileHeader>
+      <WriteBox
         ref={postRef}
-      ></textarea>
+        placeholder={`Write down your experience at ${countryName}`}
+      />
+      <footer
+        style={{
+          display: `flex`,
+          justifyContent: `space-between`,
+        }}
+      >
+        <div></div>
+        <PostButton onClick={handlePost}>POST↗</PostButton>
+      </footer>
+    </PostInnerWrapper>
+  );
+};
+
+const PostInnerWrapper = styled.div`
+  margin: 1rem 0;
+  padding: 10px;
+  border: 1.5px solid ${LightGray};
+  border-radius: 10px;
+`;
+
+const ProfileHeader = styled.header`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+const PostButton = styled.button`
+  padding: 5px 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  color: white;
+  background-color: #48b6f4;
+  border-radius: 5px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  margin-top: 1rem;
+`;
+
+const WriteBox = styled.textarea`
+  display: block;
+  min-height: 10rem;
+  border: none;
+  width: calc(100% - 20px);
+  margin-top: 1rem;
+  padding: 10px;
+`;
+
+// Profile Image, Name, Description and status.
+const Profile = ({
+  userName = 'Anonymous',
+  userState,
+  userImage = tokyoAsakusa,
+}) => {
+  return (
+    <div
+      className="Profile"
+      style={{
+        display: `flex`,
+      }}
+    >
+      <ProfileImage src={userImage} alt="profile" />
       <div>
-        <></>
-        <button
-          style={{
-            padding: `5px 10px`,
-            fontWeight: 600,
-            fontSize: `1rem`,
-            color: `white`,
-            backgroundColor: `#48B6F4`,
-            borderRadius: `5px`,
-            boxShadow: `rgba(99, 99, 99, 0.2) 0px 2px 8px 0px`,
-            marginTop: `1rem`,
-          }}
-          onClick={handlePost}
-        >
-          POST↗
-        </button>
+        <h2>monognuisy</h2>
+        <p>Parisien</p>
       </div>
     </div>
   );
 };
+
+const ProfileImage = styled.img`
+  display: block;
+  height: 2rem;
+  object-fit: cover;
+  width: 2rem;
+  border-radius: 1rem;
+  margin-right: 0.5rem;
+`;

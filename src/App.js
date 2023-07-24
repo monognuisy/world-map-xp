@@ -31,12 +31,12 @@ const GlobalStyle = createGlobalStyle`
 
   }
   //
-  // * {
-  //   margin: 0;
-  //   padding: 0;
-  //   box-sizing: border-box;
-  //   font-family: caveat;
-  // }
+  * {
+    margin: 0;
+    padding: 0;
+    // box-sizing: border-box;
+    // font-family: caveat;
+  }
 
   a {
     color: inherit;
@@ -62,15 +62,15 @@ const GlobalStyle = createGlobalStyle`
 
   h1 {
     font-size: 17px;
-    font-weight: 500;
+    font-weight: 700;
   }
   h2 {
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 600;
   }
   h3 {
     font-size: 15px;
-    font-weight: 400;
+    font-weight: 500;
   }
   p {
     font-size: 14px;
