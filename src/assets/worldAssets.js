@@ -58,7 +58,7 @@ export const worldFlag = {
   Cuba: '🇨🇺',
   Curaçao: '🇨🇼',
   Cyprus: '🇨🇾',
-  Czechia: '🇨🇿',
+  'Czech Republic': '🇨🇿',
   Denmark: '🇩🇰',
   Djibouti: '🇩🇯',
   Dominica: '🇩🇲',
