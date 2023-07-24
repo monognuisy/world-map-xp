@@ -81,8 +81,7 @@ function Map() {
       // onClick
       currMap.on('click', 'states-layer', (e) => {
         // Show popup with country name.
-        // console.log(e.features);
-        setCountryProperty(() => e.features[0].properties);
+        setCountryProperty(e.features[0].properties);
 
         const cname = e.features[0].properties.geounit;
         // new mapboxgl.Popup().setLngLat(e.lngLat).setHTML(cname).addTo(currMap);
@@ -96,8 +95,8 @@ function Map() {
         //   colorStage[currCountryId] = (colorStage[currCountryId] + 1) % 6;
         // }
 
-        setCountryName(() => cname);
-        setIsClicked(() => true);
+        setCountryName(cname);
+        setIsClicked(true);
         // currMap.setFeatureState(
         //   { source: 'states', id: hoveredPolygonId },
         //   { color: colorStage[currCountryId] },
