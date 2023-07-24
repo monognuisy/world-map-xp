@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { polyColors } from '../utils/colors';
-import { DateRange, Calendar } from 'react-date-range';
+import { DateRange } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import { addDays, differenceInDays } from 'date-fns';
@@ -13,8 +13,9 @@ import tokyoAsakusa from '../images/tokyo_asakusa.jpg';
 
 const STATUSHEIGHT = `calc((100% - 4rem) / 5)`;
 const LightGray = `#D9D9D9`;
+const Gray = `#999999`;
 
-const Sidebox = ({ countryName, countryProperty }) => {
+const Sidebox = ({ countryName, countryProperty, setSideboxOpened }) => {
   const statusColors = [
     polyColors.lightBlue,
     polyColors.green,
@@ -38,6 +39,7 @@ const Sidebox = ({ countryName, countryProperty }) => {
     const cnameFormal = countryProperty.formal_en;
     const cnameSovereignt = countryProperty.sovereient;
 
+    // Find and set flag from country names
     setFlag(
       () =>
         worldFlag[cname] ??
@@ -51,6 +53,7 @@ const Sidebox = ({ countryName, countryProperty }) => {
   return (
     <>
       <SideboxWrapper>
+        <CloseButton onClick={() => setSideboxOpened(false)}>×</CloseButton>
         <PictureHeader src={tokyoAsakusa} alt="tokyo-asakusa" />
         <PostWrapper>
           <NameWrapper>
@@ -146,6 +149,22 @@ const StatusWrapper = styled.div`
 const PostContainer = styled.div`
   margin-top: 1rem;
   width: 100%;
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  margin-top: 10px;
+  margin-left: 10px;
+  font-size: 1.5rem;
+  color: ${Gray};
+  text-align: center;
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 1rem;
+  background-color: white;
+  cursor: pointer;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 `;
 
 const StatusBlock = ({ color = LightGray }) => {
@@ -277,6 +296,7 @@ const PostButton = styled.button`
   border-radius: 5px;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   margin-top: 1rem;
+  cursor: pointer;
 `;
 
 const WriteBox = styled.textarea`

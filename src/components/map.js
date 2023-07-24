@@ -19,13 +19,16 @@ function Map() {
   const [lng, setLng] = useState(-70.9);
   const [lat, setLat] = useState(42.35);
   const [zoom, setZoom] = useState(9);
-  const [isClicked, setIsClicked] = useState(false);
+
+  //
+  const [sideboxOpened, setSideboxOpened] = useState(false);
   const [countryName, setCountryName] = useState('');
   const [countryProperty, setCountryProperty] = useState(null);
   const colorStage = useRef([]);
 
   useEffect(() => {
     let hoveredPolygonId = null;
+
     // 처음에만 map 초기화
     if (map.current) return;
 
@@ -80,7 +83,9 @@ function Map() {
 
       // onClick
       currMap.on('click', 'states-layer', (e) => {
-        // Show popup with country name.
+        // Prevent default click events.
+        e.preventDefault();
+
         setCountryProperty(e.features[0].properties);
 
         const cname = e.features[0].properties.geounit;
@@ -96,11 +101,16 @@ function Map() {
         // }
 
         setCountryName(cname);
-        setIsClicked(true);
+        setSideboxOpened(true);
         // currMap.setFeatureState(
         //   { source: 'states', id: hoveredPolygonId },
         //   { color: colorStage[currCountryId] },
         // );
+      });
+
+      // Close sidebox when press outside of the countries.
+      currMap.on('click', (e) => {
+        e.defaultPrevented || setSideboxOpened(false);
       });
 
       // onMove
@@ -138,8 +148,12 @@ function Map() {
   return (
     <div>
       <div ref={mapContainer} className="map-container" />
-      {isClicked ? (
-        <Sidebox countryName={countryName} countryProperty={countryProperty} />
+      {sideboxOpened ? (
+        <Sidebox
+          countryName={countryName}
+          countryProperty={countryProperty}
+          setSideboxOpened={setSideboxOpened}
+        />
       ) : (
         <></>
       )}
