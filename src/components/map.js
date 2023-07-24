@@ -24,12 +24,6 @@ function Map() {
   const [lat, setLat] = useState(42.35);
   const [zoom, setZoom] = useState(9);
 
-  const [viewport, setViewport] = useState({
-    latitude: 37.7577,
-    longitude: -122.4376,
-    zoom: 8,
-  });
-
   //
   const [sideboxOpened, setSideboxOpened] = useState(false);
   const [countryName, setCountryName] = useState('');
