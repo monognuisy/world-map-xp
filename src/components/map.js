@@ -1,13 +1,16 @@
 import React, { useRef, useEffect, useState } from 'react';
-import styled from 'styled-components';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
+import Geocoder from '@mapbox/mapbox-gl-geocoder';
+
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import './mapStyle.css';
+
 import { tokenRecord } from '../token';
-
 import { worlds } from '../assets/worldData';
-
 import { polyColors } from '../utils/colors';
-import { PostContainer } from './mapStyle';
+
+import Sidebox from './sidebox';
 
 mapboxgl.accessToken = tokenRecord.pub;
 
@@ -20,11 +23,16 @@ function Map() {
   const [lng, setLng] = useState(-70.9);
   const [lat, setLat] = useState(42.35);
   const [zoom, setZoom] = useState(9);
-  const [isClicked, setIsClicked] = useState(false);
-  const colorStage = useRef(null);
+
+  //
+  const [sideboxOpened, setSideboxOpened] = useState(false);
+  const [countryName, setCountryName] = useState('');
+  const [countryProperty, setCountryProperty] = useState(null);
+  const colorStage = useRef([]);
 
   useEffect(() => {
     let hoveredPolygonId = null;
+
     // 처음에만 map 초기화
     if (map.current) return;
 
@@ -79,26 +87,34 @@ function Map() {
 
       // onClick
       currMap.on('click', 'states-layer', (e) => {
-        // Show popup with country name.
-        // new mapboxgl.Popup()
-        //   .setLngLat(e.lngLat)
-        //   .setHTML(e.features[0].properties.name)
-        //   .addTo(currMap);
+        // Prevent default click events.
+        e.preventDefault();
 
-        // Set color stage of clicked country.
-        const currCountryId = e.features[0].id;
+        setCountryProperty(e.features[0].properties);
 
-        if (colorStage[currCountryId] === undefined) {
-          colorStage[currCountryId] = 1;
-        } else {
-          colorStage[currCountryId] = (colorStage[currCountryId] + 1) % 6;
-        }
+        const cname = e.features[0].properties.geounit;
+        // new mapboxgl.Popup().setLngLat(e.lngLat).setHTML(cname).addTo(currMap);
 
-        setIsClicked(() => true);
-        currMap.setFeatureState(
-          { source: 'states', id: hoveredPolygonId },
-          { color: colorStage[currCountryId] },
-        );
+        // // Set color stage of clicked country.
+        // const currCountryId = e.features[0].id;
+
+        // if (colorStage[currCountryId] === undefined) {
+        //   colorStage[currCountryId] = 1;
+        // } else {
+        //   colorStage[currCountryId] = (colorStage[currCountryId] + 1) % 6;
+        // }
+
+        setCountryName(cname);
+        setSideboxOpened(true);
+        // currMap.setFeatureState(
+        //   { source: 'states', id: hoveredPolygonId },
+        //   { color: colorStage[currCountryId] },
+        // );
+      });
+
+      // Close sidebox when press outside of the countries.
+      currMap.on('click', (e) => {
+        e.defaultPrevented || setSideboxOpened(false);
       });
 
       // onMove
@@ -130,13 +146,29 @@ function Map() {
         }
         hoveredPolygonId = null;
       });
+
+      // Add search box (a.k.a. Geocoder)
+      currMap.addControl(
+        new Geocoder({
+          accessToken: mapboxgl.accessToken,
+          mapboxgl: mapboxgl,
+        }),
+      );
     });
   });
 
   return (
     <div>
       <div ref={mapContainer} className="map-container" />
-      {/* {isClicked ? <PostContainer></PostContainer> : <></>} */}
+      {sideboxOpened ? (
+        <Sidebox
+          countryName={countryName}
+          countryProperty={countryProperty}
+          setSideboxOpened={setSideboxOpened}
+        />
+      ) : (
+        <></>
+      )}
     </div>
   );
 }
